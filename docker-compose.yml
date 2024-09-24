@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "4000:3000"
+    user: "1000"
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=ecommerce_app
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - IS_LOCAL=true
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ecommerce_app
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+
+volumes:
+  postgres-data:
