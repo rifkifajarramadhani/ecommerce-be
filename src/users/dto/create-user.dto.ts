@@ -1,9 +1,9 @@
-import { IsIn, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 import { UsersRole } from '../users-role.enum';
 
 export class CreateUserDto {
   @IsNotEmpty()
-  @IsIn([UsersRole.SUPER_ADMIN, UsersRole.CUSTOMER])
+  @IsEnum(UsersRole)
   role: string;
 
   @IsNotEmpty()
