@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -40,9 +45,16 @@ export class AuthService {
     await this.usersRepository.save(user);
   }
 
-  async login(loginDto: LoginDto): Promise<void> {
+  async login(loginDto: LoginDto): Promise<string> {
     const { email, password } = loginDto;
 
-    await this.usersRepository.findOneBy({ email });
+    const user = await this.usersRepository.findOneBy({ email });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    if (!(await bcrypt.compare(password, user.password)))
+      throw new UnauthorizedException('Invalid credentials');
+
+    return 'JWT token';
   }
 }
